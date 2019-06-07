@@ -12,11 +12,10 @@ function draw(canvas, params){
   ctx.lineWidth = params.lineWidth
   canvas.width = Math.max(2, ctx.measureText(params.str).width * ratio)
   canvas.height = Math.ceil((parseFloat(params.font) + 4)  * ratio)
-
-  ctx.restore() // 还原画布状态
-  ctx.save() // 保存画布状态
   ctx.clearRect(0, 0, canvas.width, canvas.height) // 清除画布
-  ctx.scale(ratio, ratio) // 缩放到像素比，使之高清
+
+  // 如果只在创建 canvas 时 scale 一次，手机上表现没问题。但是开发者工具显示不对。这样做可以兼容两边
+  ctx.restore(), ctx.save(), ctx.scale(ratio, ratio)
 
   // 背景
   if (params.bgColor) {
@@ -83,6 +82,7 @@ export class Text2D extends THREE.Object3D{
     params.textBaseline = params.textBaseline || 'top'
 
     this.canvas = wx.createCanvas()
+    this.canvas.getContext('2d').save()
     this.params = params
 
     draw(this.canvas, this.params)

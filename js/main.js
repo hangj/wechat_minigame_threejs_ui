@@ -24,7 +24,7 @@ export default class Main{
     let arr = ['悠然', '落霞与孤鹜齐飞', '秋水共长天一色', 'https://youran.de', 'YOURAN.DE']
     let getRandomText = () => { return arr[Math.ceil(Math.random() * arr.length - 1)] }
 
-    let text = new Text2D(getRandomText(), { font: '15px Arial', _bgColor: 'rgba(204, 204, 204, 0.5)' })
+    let text = new Text2D(getRandomText(), { font: '15px Arial', bgColor: 'rgba(204, 204, 204, 0.5)' })
     this.ui.add(text)
     text.position.set(0, text.height + 80, 1)
 
