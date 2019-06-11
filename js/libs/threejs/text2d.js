@@ -14,7 +14,7 @@ function draw(canvas, params) {
   canvas.height = Math.ceil((parseFloat(params.font) + 4) * ratio)
   ctx.clearRect(0, 0, canvas.width, canvas.height) // 清除画布
 
-  ctx.restore(), ctx.save()
+  ctx.save()
   ctx.scale(ratio, ratio)
 
   // 背景
@@ -29,6 +29,8 @@ function draw(canvas, params) {
   ctx.textAlign = params.textAlign
   ctx.textBaseline = params.textBaseline || 'top'
   ctx.fillText(params.str, 0, 0)
+
+  ctx.restore()
 }
 
 export class Sprite extends THREE.Object3D {
@@ -89,7 +91,6 @@ export class Text2D extends THREE.Object3D {
     params.textBaseline = params.textBaseline || 'top'
 
     this.canvas = document.createElement('canvas')
-    this.canvas.getContext('2d').save()
     this.params = params
 
     draw(this.canvas, this.params)
