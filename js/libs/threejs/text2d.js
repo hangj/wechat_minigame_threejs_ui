@@ -33,7 +33,7 @@ function draw(canvas, params) {
   ctx.restore()
 }
 
-export class Sprite extends THREE.Object3D {
+export class Sprite extends THREE.Sprite {
   constructor(url, onload) {
     super()
     let cb = texture => {
@@ -43,15 +43,12 @@ export class Sprite extends THREE.Object3D {
       texture.needsUpdate = true
       texture.minFilter = texture.magFilter = THREE.LinearFilter
       this.material = new THREE.SpriteMaterial({ map: texture })
-      this.sprite = new THREE.Sprite(this.material)
-      this.add(this.sprite)
 
-      this.sprite.scale.set(this.width, this.height, 1)
-      // this.sprite.center.set(0, 1) // anchor 设置在左上角
+      this.scale.set(this.width, this.height, 1)
+      // this.center.set(0, 1) // anchor 设置在左上角
 
-      if (onload) {
+      if (onload)
         onload(this)
-      }
     }
 
     if (url instanceof THREE.Texture) {
@@ -63,24 +60,16 @@ export class Sprite extends THREE.Object3D {
 
   updateTexture() {
     this.texture.needsUpdate = true
-    this.sprite.scale.set(this.width, this.height, 1)
-  }
-
-  raycast() {
-    return this.sprite.raycast.apply(this.sprite, arguments)
+    this.scale.set(this.width, this.height, 1)
   }
 
   // 缩放回去
   get width() { return this.texture.image.width / this.ratio }
   get height() { return this.texture.image.height / this.ratio }
-
-  get center() { return this.sprite.center }
-  set center(v) { return this.sprite.center.set(v) }
 }
 
-export class Text2D extends THREE.Object3D {
+export class Text2D extends Sprite {
   constructor(str, params) {
-    super()
     str = str || ''
     params = params || {}
     params.str = str
@@ -90,31 +79,22 @@ export class Text2D extends THREE.Object3D {
     params.textAlign = params.textAlign || 'left'
     params.textBaseline = params.textBaseline || 'top'
 
-    this.canvas = document.createElement('canvas')
+    let canvas = document.createElement('canvas')
+    draw(canvas, params)
+
+    super(new THREE.CanvasTexture(canvas))
+
+    this.canvas = canvas
     this.params = params
-
-    draw(this.canvas, this.params)
-
-    let texture = new THREE.CanvasTexture(this.canvas)
-    this.sprite = new Sprite(texture)
-    this.add(this.sprite)
   }
-
-  updateText() {
-    draw(this.canvas, this.params)
-    this.sprite.updateTexture()
-  }
-
-  get width() { return this.sprite.width }
-  get height() { return this.sprite.height }
 
   get text() { return this.params.str }
   set text(v) {
     if (this.params.str == v) return
     this.params.str = v
-    this.updateText()
-  }
 
-  get center() { return this.sprite.center }
-  set center(v) { return this.sprite.center.set(v) }
+    draw(this.canvas, this.params)
+    this.updateTexture()
+  }
 }
+
